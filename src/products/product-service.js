@@ -32,7 +32,7 @@ const ProductsService = {
             product_type: product.product_type,
             product_description: xss(product.product_description),
             price: product.price,
-            product_image: product.product_image,
+            product_image: xss(product.product_image),
             date_created: product.date_created
         }
     },
