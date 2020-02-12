@@ -1,3 +1,5 @@
+const xss = require('xss')
+
 const ProductsService = {
     getAllProducts(knex) {
         return knex.select('*').from('massage_products');
@@ -22,6 +24,17 @@ const ProductsService = {
         return knex('massage_products')
             .where({ id })
             .update(newProductFields)
+    },
+    serializeProduct(product) {
+        return {
+            id: product.id,
+            product_name: xss(product.product_name),
+            product_type: product.product_type,
+            product_description: xss(product.product_description),
+            price: product.price,
+            product_image: product.product_image,
+            date_created: product.date_created
+        }
     },
 }
 
