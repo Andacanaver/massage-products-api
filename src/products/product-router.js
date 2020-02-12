@@ -9,7 +9,7 @@ const jsonParser = express.json();
 const serializedProduct = product => ({
     id: product.id,
     product_name: product.product_name,
-    product_category: product.product_category,
+    product_type: product.product_type,
     product_description: product.product_description,
     price: product.price,
     image: product.image,
@@ -21,8 +21,10 @@ productsRouter
     .get((req, res, next) => {
         const knexInstance = req.app.get('db');
         ProductsService.getAllProducts(knexInstance)
-            .then(product => {
+            .then(products => {
                 res.json(products.map(serializedProduct))
             })
             .catch(next)
     })
+
+module.exports = productsRouter
