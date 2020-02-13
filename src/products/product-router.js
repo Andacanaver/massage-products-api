@@ -1,10 +1,21 @@
 const path = require('path')
-const express = require('express')
 const xss = require('xss')
+const express = require('express')
 const ProductsService = require('./product-service')
+const { requireAuth } = require('../middleware/jwt-auth')
 
 const productsRouter = express.Router();
 const jsonParser = express.json();
+
+const serializeProduct = product => ({
+            id: product.id,
+            product_name: xss(product.product_name),
+            product_type: product.product_type,
+            product_description: xss(product.product_description),
+            price: product.price,
+            product_image: xss(product.product_image),
+            date_created: product.date_created
+        })
 
 productsRouter 
     .route('/')
@@ -12,16 +23,55 @@ productsRouter
         const knexInstance = req.app.get('db');
         ProductsService.getAllProducts(knexInstance)
             .then(products => {
-                res.json(products.map(ProductsService.serializeProduct))
+                res.json(products.map(serializeProduct))
             })
             .catch(next)
+    })
+    .post(jsonParser, (req, res, next) => {
+        const { product_name, product_type, product_description, price, product_image } = req.body;
+        const newProduct = { product_name, product_type, product_description, price, product_image };
+
+        for (const [key, value] of Object.entries(newProduct))
+            if (value == null)
+                return res.status(400).json({
+                    error: `Missing '${key}' in request body`
+                })
+            
+        ProductsService.insertProduct(req.app.get('db'), newProduct)
+                .then(product => {
+                    res.status(201)
+                        .location(path.posix.join(req.originalUrl + `/${product.id}`))
+                        .json(serializeProduct(product));
+                })
+                .catch(next)
     })
 
 productsRouter
     .route('/:product_id')
+    .all(requireAuth)
     .all(checkProductExists)
     .get((req, res) => {
         res.json(ProductsService.serializeProduct(res.product))
+    })
+    .patch(jsonParser, (req, res, next) => {
+        const { product_name, product_type, product_description, price, product_image } = req.body
+        const productToUpdate = { product_name, product_type, product_description, price, product_image }
+
+        const numberOfValues = Object.values(productToUpdate).filter(Boolean).length
+        if(numberOfValues === 0) {
+            return res.status(400).json({
+                error: `Request body must contain any of the following, name, type, description, price or image.`
+            })
+        }
+        ProductsService.updateProduct(
+            req.app.get('db'),
+            req.params.product_id,
+            productToUpdate
+        )
+        .then(numRowsAffected => {
+            res.status(204).end()
+        })
+        .catch(next)
     })
 
 

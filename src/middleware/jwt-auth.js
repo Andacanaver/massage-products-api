@@ -12,7 +12,6 @@ function requireAuth(req, res, next) {
 
     try {
         const payload = AuthService.verifyJwt(bearerToken)
-
         AuthService.getUserWithUserName(
             req.app.get('db'),
             payload.sub
@@ -33,4 +32,4 @@ function requireAuth(req, res, next) {
     }
 }
 
-module.exports = requireAuth
+module.exports = {requireAuth} 
