@@ -1,9 +1,18 @@
 const UsersService = require("./users-service");
 const path = require("path");
 const express = require("express");
+const xss = require('xss')
 
 const usersRouter = express.Router();
 const jsonParser = express.json();
+
+const serializeUser = user => ({
+            id: user.id,
+            full_name: xss(user.full_name),
+            username: xss(user.username),
+            email_address: xss(user.email_address),
+            date_created: new Date(user.date_created)
+        })
 
 usersRouter
     .route('/')
@@ -11,7 +20,7 @@ usersRouter
         const knexInstance = req.app.get('db')
         UsersService.getAllUsers(knexInstance)
             .then(users => {
-                res.json(users.map(UsersService.serializeUser))
+                res.json(users.map(serializeUser))
             })
             .catch(next)
     })
@@ -55,38 +64,36 @@ usersRouter
 })
 
 usersRouter
-    .route('/:user_id')
-    .get((req, res, next) => {
-        res.json(UsersService.serializeUser(res.user))
-    })
-    .delete((req, res, next) => {
-        UsersService.deleteUser(
-            req.app.get('db'),
-            req.params.user_id
-        )
-            .then(numRowsAffected => {
-                res.status(204).end()
-            })
-            .catch(next)
-    })
-    .patch(jsonParser, (req, res, next) => {
-        const { full_name, email_address, password } = req.body
-        const userToUpdate = { full_name, email_address, password }
-        const numberOfValues = Object.values(userToUpdate).filter(Boolean).length
-        if(numberOfValues === 0) {
-            return res.status(400).json({
-                error: `Request body must contain either 'full name', 'email address', or 'password'`
-            })
-        }
-        UsersService.updateUser(
-            req.app.get('db'),
-            req.params.user_id,
-            userToUpdate
-        )
-            .then(numRowsAffected => {
-                res.status(204).end()
-            })
-            .catch(next)
-    })
+	.route("/:user_id")
+	.get((req, res) => {
+		res.json(serializeUser(res.user));
+	})
+	.delete((req, res, next) => {
+		UsersService.deleteUser(req.app.get("db"), req.params.user_id)
+			.then(numRowsAffected => {
+				res.status(204).end();
+			})
+			.catch(next);
+	})
+	.patch(jsonParser, (req, res, next) => {
+		const { full_name, email_address, password } = req.body;
+		const userToUpdate = { full_name, email_address, password };
+		const numberOfValues = Object.values(userToUpdate).filter(Boolean)
+			.length;
+		if (numberOfValues === 0) {
+			return res.status(400).json({
+				error: `Request body must contain either 'full name', 'email address', or 'password'`
+			});
+		}
+		UsersService.updateUser(
+			req.app.get("db"),
+			req.params.user_id,
+			userToUpdate
+		)
+			.then(numRowsAffected => {
+				res.status(204).end();
+			})
+			.catch(next);
+	});
 
 module.exports = usersRouter

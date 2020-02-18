@@ -48,10 +48,9 @@ productsRouter
 
 productsRouter
     .route('/:product_id')
-    .all(requireAuth)
     .all(checkProductExists)
     .get((req, res) => {
-        res.json(ProductsService.serializeProduct(res.product))
+        res.json(serializeProduct(res.product))
     })
     .patch(jsonParser, (req, res, next) => {
         const { product_name, product_type, product_description, price, product_image } = req.body

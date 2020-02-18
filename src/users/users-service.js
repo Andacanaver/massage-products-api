@@ -9,6 +9,13 @@ const UsersService = {
             .first()
             .then(user => !!user)
     },
+    getById(knex, id) {
+        return knex
+			.from("massage_users")
+			.select('*')
+			.where('id', id)
+			.first();
+    },
     getAllUsers(knex) {
         return knex.select('*').from('massage_users')
     },
@@ -37,15 +44,7 @@ const UsersService = {
     hashPassword(password) {
         return bcrypt.hash(password, 12)
     },
-    serializeUser(user) {
-        return {
-            id: user.id,
-            full_name: xss(user.full_name),
-            username: xss(user.username),
-            email_address: xss(user.email_address),
-            date_created: new Date(user.date_created)
-        }
-    },
+    
     deleteUser(knex, id) {
         return knex('massage_users')
             .where({ id })
