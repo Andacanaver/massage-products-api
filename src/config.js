@@ -5,5 +5,5 @@ module.exports = {
 		process.env.DB_URL ||
 		"postgresql://jmoe:jmoeadmin@localhost/massage-products",
 	JWT_SECRET: process.env.JWT_SECRET || 'super-secret-passphrase',
-	JWT_EXPIRY: process.env.JWT_EXPIRY || '20s'
+	JWT_EXPIRY: process.env.JWT_EXPIRY || '1d'
 };
