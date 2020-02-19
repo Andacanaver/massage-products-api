@@ -2,6 +2,7 @@ const UsersService = require("./users-service");
 const path = require("path");
 const express = require("express");
 const xss = require('xss')
+const {requireAuth} = require('../middleware/jwt-auth')
 
 const usersRouter = express.Router();
 const jsonParser = express.json();
@@ -55,7 +56,7 @@ usersRouter
                     user => {
                         res.status(201)
                             .location(path.posix.join(req.originalUrl, `/${user.id}`))
-                            .json(UsersService.serializeUser(user))
+                            .json(serializeUser(user))
                     }
                 )
             });
@@ -65,8 +66,9 @@ usersRouter
 
 usersRouter
 	.route("/:user_id")
+	.all(requireAuth)
 	.get((req, res) => {
-		res.json(serializeUser(res.user));
+		res.json(serializeUser(req.user));
 	})
 	.delete((req, res, next) => {
 		UsersService.deleteUser(req.app.get("db"), req.params.user_id)

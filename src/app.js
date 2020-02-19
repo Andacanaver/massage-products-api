@@ -7,6 +7,7 @@ const { NODE_ENV } = require('./config')
 const productsRouter = require('./products/product-router')
 const authRouter = require('./auth/auth-router')
 const usersRouter = require('./users/users-router')
+const profileRouter = require('./profile/profile-router')
 
 const app = express();
 
@@ -23,7 +24,7 @@ app.get('/', (req, res) => {
 app.use('/api/products', productsRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/users', usersRouter)
-
+app.use('/api/profile', profileRouter)
 app.use(function errorHandler(error, req, res, next) {
     let response
     if (NODE_ENV === 'production') {
