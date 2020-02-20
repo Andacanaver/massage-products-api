@@ -1,5 +1,6 @@
 const { requireAuth } = require('../middleware/jwt-auth')
 const express = require("express");
+const xss = require('xss')
 
 const profileRouter = express.Router();
 
