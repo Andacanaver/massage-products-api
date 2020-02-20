@@ -46,6 +46,17 @@ productsRouter
     })
 
 productsRouter
+    .route('/type')
+    .get((req, res, next) => {
+        const knexInstance = req.app.get('db');
+        ProductsService.getType(knexInstance, req.params.product_type)
+            .then(products => {
+                res.json(products.map(serializeProduct))
+            })
+            .catch(next)
+    })
+
+productsRouter
     .route('/:product_id')
     .all(checkProductExists)
     .get((req, res) => {
