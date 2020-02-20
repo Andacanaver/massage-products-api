@@ -4,6 +4,12 @@ const ProductsService = {
     getAllProducts(knex) {
         return knex.select('*').from('massage_products');
     },
+    getAllSearchProducts(knex, term) {
+        return knex
+			.select("*")
+			.from("massage_products AS mp")
+			.where("mp.product_name", "Ilike", `%${term}%`);
+    },
     insertProduct(knex, newProduct) {
         return knex
             .insert(newProduct)

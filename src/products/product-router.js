@@ -44,7 +44,19 @@ productsRouter
                 })
                 .catch(next)
     })
-
+productsRouter
+    .route('/search')
+    .get((req, res, next) => {
+        const knexInstance = req.app.get("db");
+        ProductsService.getAllSearchProducts(
+			knexInstance,
+			req.query.name
+		)
+			.then(products => {
+				res.json(products.map(serializeProduct));
+			})
+			.catch(next);
+    })
 productsRouter
     .route('/type')
     .get((req, res, next) => {
