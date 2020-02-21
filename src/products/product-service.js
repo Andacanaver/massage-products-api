@@ -29,8 +29,8 @@ const ProductsService = {
     getType(knex, type) {
         return knex
 			.select("*")
-			.from("massage_products AS mp")
-			.where("mp.product_type",type);
+			.from("massage_products")
+			.where("product_type",type);
     },
     updateProduct(knex, id, newProductFields) {
         return knex('massage_products')

@@ -48,21 +48,22 @@ productsRouter
 	.route("/search")
 	.get(
 		(req, res, next) => {
-			const knexInstance = req.app.get("db");
+            const knexInstance = req.app.get("db");
+            if(req.query.name){
 			ProductsService.getAllSearchProducts(knexInstance, req.query.name)
 				.then(products => {
 					res.json(products.map(serializeProduct));
 				})
-				.catch(next);
-		},
-		(req, res, next) => {
-			const knexInstance = req.app.get("db");
-			ProductsService.getType(knexInstance, req.query.type)
+                .catch(next);
+            }
+            if(req.query.type) {
+            ProductsService.getType(knexInstance, req.query.type)
 				.then(products => {
 					res.json(products.map(serializeProduct));
 				})
-				.catch(next);
-		}
+                .catch(next);
+            }
+        }
 	)
 	.get((req, res, next) => {
 		const knexInstance = req.app.get("db");
