@@ -26,21 +26,11 @@ const ProductsService = {
             .where('id', id)
             .first();
     },
-    getType(knex, product_type) {
+    getType(knex, type) {
         return knex
-            .from('massage_products AS mp')
-            .select(
-                'mp.id',
-                'mp.product_name',
-                'mp.product_description',
-                'mp.product_type',
-                'mp.price',
-                knex.raw(
-                    `count(DISTINCT product_type)`
-                )
-            )
-            .where('mp.product_type', product_type)
-            .groupBy('mp.id', 'mp.product_type')
+			.select("*")
+			.from("massage_products AS mp")
+			.where("mp.product_type",type);
     },
     updateProduct(knex, id, newProductFields) {
         return knex('massage_products')
