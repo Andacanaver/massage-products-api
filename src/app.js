@@ -8,6 +8,7 @@ const productsRouter = require('./products/product-router')
 const authRouter = require('./auth/auth-router')
 const usersRouter = require('./users/users-router')
 const profileRouter = require('./profile/profile-router')
+const typeRouter = require('./type/type-router')
 
 const app = express();
 
@@ -25,6 +26,8 @@ app.use('/api/products', productsRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/profile', profileRouter)
+app.use('/api/types', typeRouter)
+
 app.use(function errorHandler(error, req, res, next) {
     let response
     if (NODE_ENV === 'production') {
