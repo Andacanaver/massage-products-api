@@ -25,6 +25,7 @@ productsRouter
                 res.json(products.map(serializeProduct))
             })
             .catch(next)
+        
     })
     .post(jsonParser, (req, res, next) => {
         const { product_name, product_type, product_description, price, product_image } = req.body;
