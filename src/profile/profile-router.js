@@ -25,15 +25,42 @@ profileRouter.get('/', requireAuth, (req, res) => {
 			error: 'Please change one of the following full name, email address or password'
 		})
 	}
+	const passwordError = UsersService.validatePassword(password);
+
+	if (passwordError) {
+		return res.status(400).json({ error: passwordError });
+	
+	}
+	if (password) {
+		return ProfileService.hashPassword(password).then(hashedPassword => {
+			const editUser = {
+				full_name,
+				password: hashedPassword,
+				email_address
+			};
+			return;
+		});
+	} else {
+		
+	}
+
+
 	ProfileService.updateUser(
 		req.app.get('db'),
 		req.params.user_id,
 		userToUpdate
-	)
-		.then(numRowsAffected => {
-			res.status(204).end();
-		})
-		.catch(next)
+	).then(editPassword => {
+		if (editPassword) {
+			return ProfileService.hashPassword(password).then(hashedPassword => {
+				const editUser = {
+					full_name,
+					password: hashedPassword,
+					email_address
+				}
+				return
+			})
+		}
+	})
 
 })
 
