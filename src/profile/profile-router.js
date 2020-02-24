@@ -11,7 +11,6 @@ const serializeUser = user => ({
 	full_name: xss(user.full_name),
 	username: xss(user.username),
 	email_address: xss(user.email_address),
-	date_created: new Date(user.date_created)
 });
 
 profileRouter.get('/', requireAuth, (req, res) => {
@@ -19,18 +18,21 @@ profileRouter.get('/', requireAuth, (req, res) => {
 }).patch('/', requireAuth, jsonParser, (req, res, next) => {
 	const { full_name, email_address, password } = req.body;
 	const userToUpdate = { full_name, email_address, password };
-	const numberOfValues = Object.values(userToUpdate).filter(Boolean).length;
+	const numberOfValues = Object.values(userToUpdate).filter
+	(Boolean)
+		.length;
 	if(numberOfValues === 0) {
 		return res.status(400).json({
 			error: 'Please change one of the following full name, email address or password'
 		})
 	}
-	const passwordError = UsersService.validatePassword(password);
-
+	//validates the password
+	const passwordError = ProfileService.validatePassword(password);
+	//if invalid password send error about what the password needs
 	if (passwordError) {
 		return res.status(400).json({ error: passwordError });
-	
 	}
+	//check if they're updating the password, if so, hash it
 	if (password) {
 		return ProfileService.hashPassword(password).then(hashedPassword => {
 			const editUser = {
@@ -38,10 +40,7 @@ profileRouter.get('/', requireAuth, (req, res) => {
 				password: hashedPassword,
 				email_address
 			};
-			return;
 		});
-	} else {
-		
 	}
 
 
@@ -49,18 +48,10 @@ profileRouter.get('/', requireAuth, (req, res) => {
 		req.app.get('db'),
 		req.params.user_id,
 		userToUpdate
-	).then(editPassword => {
-		if (editPassword) {
-			return ProfileService.hashPassword(password).then(hashedPassword => {
-				const editUser = {
-					full_name,
-					password: hashedPassword,
-					email_address
-				}
-				return
-			})
-		}
+	).then(numRowsAffected => {
+		res.status(204).end()
 	})
+	.catch(next)
 
 })
 
