@@ -23,6 +23,7 @@ function requireAuth(req, res, next) {
                     console.log("Hello");
                 }
                 req.user = user
+                console.log(req.user)
                 next()
             })
             .catch(err => {

@@ -1,11 +1,14 @@
-const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&])[\S]+/;
+const REGEX_UPPER_LOWER_NUMBER_SPECIAL = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&*])[\S]+/;
 const bcrypt = require("bcryptjs");
 
 const ProfileService = {
 	updateUser(knex, id, newUserFields) {
+		console.log(id)
+		console.log(newUserFields)
 		return knex("massage_users")
 			.where({ id })
 			.update(newUserFields);
+			
 	},
 	validatePassword(password) {
 		if (password.length < 8) {

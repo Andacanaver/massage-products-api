@@ -27,30 +27,35 @@ profileRouter.get('/', requireAuth, (req, res) => {
 		})
 	}
 	//validates the password
-	const passwordError = ProfileService.validatePassword(password);
+	//const passwordError = ProfileService.validatePassword(password);
+	let passwordError;
+	if(password) {
+		passwordError = ProfileService.validatePassword(password);
+	}
 	//if invalid password send error about what the password needs
 	if (passwordError) {
 		return res.status(400).json({ error: passwordError });
 	}
 	//check if they're updating the password, if so, hash it
 	if (password) {
+
 		return ProfileService.hashPassword(password).then(hashedPassword => {
 			const editUser = {
 				full_name,
 				password: hashedPassword,
 				email_address
-			};
+			}
+			return ProfileService.updateUser(
+				req.app.get("db"),
+				req.user.id,
+				editUser
+			).then(numRowsAffected => {
+				res.status(204).end();
+			});
 		});
 	}
-
-
-	ProfileService.updateUser(
-		req.app.get('db'),
-		req.params.user_id,
-		userToUpdate
-	).then(numRowsAffected => {
-		res.status(204).end()
-	})
+	console.log(req.user)
+	
 	.catch(next)
 
 })
