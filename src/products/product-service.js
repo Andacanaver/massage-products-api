@@ -1,4 +1,3 @@
-const xss = require('xss')
 
 const ProductsService = {
     getAllProducts(knex) {
