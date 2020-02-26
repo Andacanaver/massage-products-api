@@ -1,5 +1,17 @@
-TRUNCATE massage_wishlist RESTART IDENTITY CASCADE;
+TRUNCATE 
+    massage_wishlist,
+    massage_wishlist_users,
+    massage_wishlist_products
+RESTART IDENTITY CASCADE;
 
-INSERT INTO massage_wishlist (user_id, wishlist_name, product_id)
+INSERT INTO massage_wishlist (wishlist_name)
 VALUES 
-    (1, 'Wishlist One', 1),(1, 'Wishlist One', 2),(1, 'Wishlist One', 3),(1, 'Wishlist One', 4),(1, 'Wishlist One', 5),(1, 'Wishlist One', 6),(1, 'Wishlist One', 7),(2, 'Wishlist One', 1),(2, 'Wishlist One', 2),(2, 'Wishlist One', 3),(3, 'Wishlist One', 1),(3, 'Wishlist One', 2),(3, 'Wishlist One', 3),(3, 'Wishlist One', 7),(4, 'Wishlist One', 1),(4, 'Wishlist One', 6),(5, 'Wishlist One', 1),(5, 'Wishlist One', 3),(2, 'Wishlist One', 6),(3, 'Wishlist One', 5);
+    ('Wishlist One'), ('Wishlist Two'), ('Wishlist Three'), ('Wishlist One'), ('Wishlist Four');
+
+INSERT INTO massage_wishlist_users (user_id, wishlist_id)
+VALUES
+    (1, 1), (1, 2), (2, 3), (2, 4);
+
+INSERT INTO massage_wishlist_products (product_id, wishlist_id)
+VALUES
+    (1, 1), (2, 1), (3, 1), (7, 1), (1, 2), (2, 2), (7, 3), (4, 3);
