@@ -14,6 +14,8 @@ const serializeWishlist = wishlist => ({
 const serializeProduct = product => ({
     id: product.id,
     product_name: product.product_name,
+    wishlit_id: product.wishlist_id,
+    user_id: product.user_id
 
 })
 
@@ -25,6 +27,26 @@ wishlistRouter
                 res.json(wishlist.map(serializeWishlist));
             })
             .catch(next)
+    })
+    .post(requireAuth, jsonParser, (req, res, next) => {
+        const { wishlist_name, user_id } = req.body
+        for (const field of ['wishlist_name']) {
+            if(!req.body[field]) {
+                return res.status(400).json({
+                    error: `Missing '${field}' in request body`
+                });
+            }
+        }
+        const newWishlist = {
+            wishlist_name,
+            user_id: req.user.id
+        }
+        WishlistService.insertWishlist(req.app.get('db'), newWishlist)
+            .then(wishlist => {
+                res.status(201)
+                    .json(serializeWishlist(wishlist))
+            })
+
     })
     
 wishlistRouter
