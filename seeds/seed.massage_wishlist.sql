@@ -6,7 +6,7 @@ RESTART IDENTITY CASCADE;
 
 INSERT INTO massage_wishlist (wishlist_name)
 VALUES 
-    ('Wishlist One'), ('Wishlist Two'), ('Wishlist Three'), ('Wishlist One'), ('Wishlist Four');
+    ('Wishlist One'), ('Wishlist Two'), ('Wishlist Three'), ('Wishlist Four'), ('Wishlist Five');
 
 INSERT INTO massage_wishlist_users (user_id, wishlist_id)
 VALUES
