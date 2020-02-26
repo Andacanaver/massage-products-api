@@ -8,8 +8,6 @@ const WishlistService = {
             .leftJoin('massage_wishlist', 'massage_wishlist.id', 'massage_wishlist_users.wishlist_id')
     },
     getWishlistProducts(knex, id, userId) {
-        console.log(id)
-        console.log(userId)
         return knex
 			.from("massage_wishlist AS wl")
 			.where("wl.id", id)
