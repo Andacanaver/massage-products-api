@@ -14,8 +14,9 @@ const serializeWishlist = wishlist => ({
 const serializeProduct = product => ({
     id: product.id,
     product_name: product.product_name,
-    wishlit_id: product.wishlist_id,
-    user_id: product.user_id
+    wishlist_id: product.wishlist_id,
+    user_id: product.user_id,
+    product_id: product.product_id
 
 })
 
@@ -63,6 +64,22 @@ wishlistRouter
 				})
 				.catch(next);
         }
+    })
+    .post(requireAuth, jsonParser, (req, res, next) => {
+        const { product_id, wishlist_id } = req.body
+        WishlistService.getProductId(req.app.get('db'), product_id).then(productId => {
+            const newProduct = {
+				product_id: productId,
+				wishlist_id
+			}
+			return WishlistService.insertProduct(
+				req.app.get("db"),
+				newProduct
+			).then(product => {
+				res.status(201).json(serializeProduct(product));
+			});
+        })
+        .catch(next)
     })
 
 

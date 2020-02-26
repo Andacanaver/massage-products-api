@@ -1,20 +1,21 @@
 const WishlistService = {
     getAllWishlistsForUser(knex, id) {
         return knex
-            .from('massage_wishlist_users')
-            .where('massage_wishlist_users.user_id', id)
-            .select('massage_wishlist_users.user_id', 'massage_wishlist_users.wishlist_id', 'massage_wishlist.wishlist_name', 'massage_wishlist.id')
-            .leftJoin('massage_wishlist', 'massage_wishlist.id', 'massage_wishlist_users.wishlist_id')
+            .from('massage_wishlist')
+            .where('massage_wishlist.user_id', id)
+            .select('massage_wishlist.user_id', 'massage_wishlist.wishlist_name', 'massage_wishlist.id')
+            
 	},
     getWishlistProducts(knex, id, userId) {
         return knex
 			.from("massage_wishlist AS wl")
-			.where({"wl.id": id, "user_id": userId})
+			.where({"wl.id": id, "wl.user_id": userId})
 			.select(
 				"wl.wishlist_name",
 				"wlp.wishlist_id",
 				"wlp.product_id",
-				"wl.user_id"
+				"wl.user_id",
+				'mp.id'
 			)
 			.distinct("mp.product_name")
 			.leftJoin(
@@ -31,6 +32,20 @@ const WishlistService = {
 			.into('massage_wishlist')
 			.returning('*')
 			.then(([wishlist]) => wishlist)
+	},
+	insertProduct(knex, newProduct){
+		return knex
+			.insert(newProduct)
+			.into('massage_wishlist_products')
+			.returning('*')
+			.then(([wishlistProduct]) => wishlistProduct)
+	},
+	getProductId(knex, id) {
+		return knex
+			.from('massage_products')
+			.select('id')
+			.where('id', id)
+			.first();
 	}
 }
 
