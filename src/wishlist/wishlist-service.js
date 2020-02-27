@@ -3,7 +3,8 @@ const WishlistService = {
         return knex
             .from('massage_wishlist')
             .where('massage_wishlist.user_id', id)
-            .select('massage_wishlist.user_id', 'massage_wishlist.wishlist_name', 'massage_wishlist.id')
+            .select(
+				'massage_wishlist.user_id', 'massage_wishlist.wishlist_name', 'massage_wishlist.id')
             
 	},
     getWishlistProducts(knex, id, userId) {
@@ -45,8 +46,10 @@ const WishlistService = {
 			.from('massage_products')
 			.select('id')
 			.where('id', id)
-			.first();
-	}
+			.first()
+			
+	},
+	
 }
 
 module.exports = WishlistService

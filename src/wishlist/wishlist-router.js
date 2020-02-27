@@ -9,10 +9,10 @@ const jsonParser = express.json()
 const serializeWishlist = wishlist => ({
     id: wishlist.id,
     wishlist_name: xss(wishlist.wishlist_name),
-    user_id: wishlist.user_id
+    user_id: wishlist.user_id,
+    number_of_products: wishlist.number_of_products
 })
 const serializeProduct = product => ({
-    id: product.id,
     product_name: product.product_name,
     wishlist_id: product.wishlist_id,
     user_id: product.user_id,
@@ -22,14 +22,17 @@ const serializeProduct = product => ({
 
 wishlistRouter
     .route('/')
-    .get(requireAuth, (req, res, next) => {
+    .all(requireAuth)
+    .get((req, res, next) => {
         WishlistService.getAllWishlistsForUser(req.app.get('db'), req.user.id)
             .then(wishlist => {
+                console.log(wishlist)
                 res.json(wishlist.map(serializeWishlist));
             })
+            
             .catch(next)
     })
-    .post(requireAuth, jsonParser, (req, res, next) => {
+    .post(jsonParser, (req, res, next) => {
         const { wishlist_name, user_id } = req.body
         for (const field of ['wishlist_name']) {
             if(!req.body[field]) {
@@ -52,7 +55,8 @@ wishlistRouter
     
 wishlistRouter
     .route('/:wishlist_id')
-    .get(requireAuth, (req, res, next) => {
+    .all(requireAuth)
+    .get((req, res, next) => {
         if(req.user.id) {
             WishlistService.getWishlistProducts(
 				req.app.get("db"),
@@ -65,17 +69,19 @@ wishlistRouter
 				.catch(next);
         }
     })
-    .post(requireAuth, jsonParser, (req, res, next) => {
+    .post(jsonParser, (req, res, next) => {
         const { product_id, wishlist_id } = req.body
         WishlistService.getProductId(req.app.get('db'), product_id).then(productId => {
             const newProduct = {
-				product_id: productId,
+				product_id: productId.id,
 				wishlist_id
-			}
+            }
+            console.log(newProduct);
 			return WishlistService.insertProduct(
 				req.app.get("db"),
 				newProduct
 			).then(product => {
+                
 				res.status(201).json(serializeProduct(product));
 			});
         })
