@@ -92,7 +92,6 @@ wishlistRouter
 						product_id: productId.id,
 						wishlist_id
 					}
-					(newProduct);
 					return WishlistService.insertProduct(
 						req.app.get("db"),
 						newProduct
@@ -102,9 +101,7 @@ wishlistRouter
 							
 					});
 				});
-            })
-        
-        .catch(next)
+            }).catch(next)
     })
 
 
