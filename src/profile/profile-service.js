@@ -3,8 +3,6 @@ const bcrypt = require("bcryptjs");
 
 const ProfileService = {
 	updateUser(knex, id, newUserFields) {
-		console.log(id)
-		console.log(newUserFields)
 		return knex("massage_users")
 			.where({ id })
 			.update(newUserFields);

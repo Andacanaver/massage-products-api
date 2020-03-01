@@ -31,7 +31,6 @@ wishlistRouter
     .get((req, res, next) => {
         WishlistService.getAllWishlistsForUser(req.app.get('db'), req.user.id)
             .then(wishlist => {
-                console.log(wishlist)
                 res.json(wishlist.map(serializeWishlist));
             })
             
@@ -41,7 +40,6 @@ wishlistRouter
         const { wishlist_name, user_id } = req.body
         for (const field of ['wishlist_name']) {
             if(!req.body[field]) {
-                console.log(req.body)
                 return res.status(400).json({
                     error: `Missing '${field}' in request body`
                 });
@@ -51,7 +49,6 @@ wishlistRouter
             wishlist_name,
             user_id: req.user.id
         }
-        console.log(newWishlist);
         WishlistService.insertWishlist(req.app.get('db'), newWishlist)
             .then(wishlist => {
                 
@@ -83,7 +80,6 @@ wishlistRouter
         WishlistService.checkProductInWishlist(req.app.get('db'), product_id, wishlist_id)
             .then(checkProductInWishlist => {
                 if(checkProductInWishlist) {
-                    console.log(checkProductInWishlist)
                     return res.status(400).json({
                         error: 'Product already in wishlist'
                     })
@@ -96,12 +92,11 @@ wishlistRouter
 						product_id: productId.id,
 						wishlist_id
 					}
-					console.log(newProduct);
+					(newProduct);
 					return WishlistService.insertProduct(
 						req.app.get("db"),
 						newProduct
 					).then(product => {
-                        console.log(product)
 						res.status(201)
 							.json(serializeProduct(product));
 							

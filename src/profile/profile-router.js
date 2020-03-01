@@ -54,7 +54,6 @@ profileRouter.get('/', requireAuth, (req, res) => {
 			});
 		});
 	}
-	console.log(req.user)
 	
 	.catch(next)
 
