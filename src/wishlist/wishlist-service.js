@@ -55,6 +55,13 @@ const WishlistService = {
 			.first()
 			
 	},
+	checkProductInWishlist(knex, product_id) {
+		return knex
+			.from('massage_wishlist_products')
+			.where({ product_id })
+			.first()
+			.then(product => !!product)
+	}
 	
 }
 
