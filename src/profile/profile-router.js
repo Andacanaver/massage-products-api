@@ -49,13 +49,15 @@ profileRouter.get('/', requireAuth, (req, res) => {
 				req.app.get("db"),
 				req.user.id,
 				editUser
-			).then(numRowsAffected => {
-				res.status(204).end();
-			});
+			)
+				.then(numRowsAffected => {
+					res.status(204).end();
+				})
+				.catch(next);
 		});
 	}
 	
-	.catch(next)
+	
 
 })
 
