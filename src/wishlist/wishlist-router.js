@@ -80,9 +80,10 @@ wishlistRouter
     })
     .post(jsonParser, (req, res, next) => {
         const { product_id, wishlist_id } = req.body
-        WishlistService.checkProductInWishlist(req.app.get('db'), product_id)
+        WishlistService.checkProductInWishlist(req.app.get('db'), product_id, wishlist_id)
             .then(checkProductInWishlist => {
                 if(checkProductInWishlist) {
+                    console.log(checkProductInWishlist)
                     return res.status(400).json({
                         error: 'Product already in wishlist'
                     })
@@ -94,15 +95,16 @@ wishlistRouter
 					const newProduct = {
 						product_id: productId.id,
 						wishlist_id
-					};
+					}
 					console.log(newProduct);
 					return WishlistService.insertProduct(
 						req.app.get("db"),
 						newProduct
 					).then(product => {
+                        console.log(product)
 						res.status(201)
-							.json(serializeProduct(product))
-							.then({ error: `Product Added` });
+							.json(serializeProduct(product));
+							
 					});
 				});
             })

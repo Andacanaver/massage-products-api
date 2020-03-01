@@ -55,10 +55,10 @@ const WishlistService = {
 			.first()
 			
 	},
-	checkProductInWishlist(knex, product_id) {
+	checkProductInWishlist(knex, product_id, wishlist_id) {
 		return knex
 			.from('massage_wishlist_products')
-			.where({ product_id })
+			.where({ product_id, wishlist_id })
 			.first()
 			.then(product => !!product)
 	}
