@@ -16,7 +16,12 @@ const serializeProduct = product => ({
     product_name: product.product_name,
     wishlist_id: product.wishlist_id,
     user_id: product.user_id,
-    product_id: product.product_id
+    product_id: product.product_id,
+    product_name: product.product_name,
+    price: product.price,
+    product_description: product.product_description,
+    product_image: product.product_image,
+    product_type: product.product_type
 
 })
 
@@ -36,6 +41,7 @@ wishlistRouter
         const { wishlist_name, user_id } = req.body
         for (const field of ['wishlist_name']) {
             if(!req.body[field]) {
+                console.log(req.body)
                 return res.status(400).json({
                     error: `Missing '${field}' in request body`
                 });
@@ -45,11 +51,14 @@ wishlistRouter
             wishlist_name,
             user_id: req.user.id
         }
+        console.log(newWishlist);
         WishlistService.insertWishlist(req.app.get('db'), newWishlist)
             .then(wishlist => {
+                
                 res.status(201)
                     .json(serializeWishlist(wishlist))
             })
+            .catch(next)
 
     })
     
@@ -71,6 +80,12 @@ wishlistRouter
     })
     .post(jsonParser, (req, res, next) => {
         const { product_id, wishlist_id } = req.body
+        if (product_id === res.product_id) {
+            return res.status(400).json({
+                error: `This product is already in the wishlist`
+            })
+
+        } else {
         WishlistService.getProductId(req.app.get('db'), product_id).then(productId => {
             const newProduct = {
 				product_id: productId.id,
@@ -82,10 +97,11 @@ wishlistRouter
 				newProduct
 			).then(product => {
                 
-				res.status(201).json(serializeProduct(product));
-			});
+				res.status(201).json(serializeProduct(product)).then({error: `Product Added`})
+            })
         })
         .catch(next)
+    }
     })
 
 

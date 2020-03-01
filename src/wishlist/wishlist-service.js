@@ -16,7 +16,13 @@ const WishlistService = {
 				"wlp.wishlist_id",
 				"wlp.product_id",
 				"wl.user_id",
-				'mp.id'
+				'mp.id',
+				'mp.product_name',
+				'mp.price',
+				'mp.product_description',
+				'mp.product_image',
+				'mp.product_type'
+
 			)
 			.distinct("mp.product_name")
 			.leftJoin(

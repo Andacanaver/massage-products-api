@@ -1,7 +1,5 @@
 TRUNCATE 
-    massage_wishlist,
-    massage_wishlist_users,
-    massage_wishlist_products
+    massage_wishlist
 RESTART IDENTITY CASCADE;
 
 INSERT INTO massage_wishlist (wishlist_name, user_id)
