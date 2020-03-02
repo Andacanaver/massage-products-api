@@ -20,11 +20,33 @@ productsRouter
     .route('/')
     .get((req, res, next) => {
         const knexInstance = req.app.get('db');
-        ProductsService.getAllProducts(knexInstance)
-            .then(products => {
-                res.json(products.map(serializeProduct))
-            })
-            .catch(next)
+        if(!req.query.name && !req.query.type) {
+            ProductsService.getAllProducts(knexInstance)
+				.then(products => {
+					res.json(products.map(serializeProduct));
+				})
+				.catch(next);
+        }
+        if (req.query.name) {
+			ProductsService.getAllSearchProducts(knexInstance, req.query.name)
+				.then(products => {
+					if (!products) {
+						return res.status(400).json({
+							error: `No products containing '${req.query.name}'.`
+						});
+					}
+					return res.json(products.map(serializeProduct));
+				})
+				.catch(next);
+		}
+
+		if (req.query.type) {
+			ProductsService.getType(knexInstance, req.query.type)
+				.then(products => {
+					res.json(products.map(serializeProduct));
+				})
+				.catch(next);
+		}
         
     })
     .post(jsonParser, (req, res, next) => {
@@ -45,36 +67,7 @@ productsRouter
                 })
                 .catch(next)
     })
-productsRouter
-	.route("/search")
-	.get(
-		(req, res, next) => {
-            const knexInstance = req.app.get("db");
-            if (req.query.name) {
-				ProductsService.getAllSearchProducts(
-					knexInstance,
-					req.query.name
-				)
-					.then(products => {
-						if(!products) {
-                            return res.status(400).json({
-                                error: `No products containing '${req.query.name}'.`
-                            })
-                        }
-                        return res.json(products.map(serializeProduct));
-					})
-					.catch(next);
-			}
-            
-            if(req.query.type) {
-            ProductsService.getType(knexInstance, req.query.type)
-				.then(products => {
-					res.json(products.map(serializeProduct));
-				})
-                .catch(next);
-            }
-        }
-	)
+
 	
 productsRouter
     .route('/type')
