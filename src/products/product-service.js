@@ -6,8 +6,8 @@ const ProductsService = {
     getAllSearchProducts(knex, term) {
         return knex
 			.select("*")
-			.from("massage_products AS mp")
-			.where("mp.product_name", "Ilike", `%${term}%`);
+			.from("massage_products")
+			.where("product_name", "Ilike", `%${term}%`);
     },
     insertProduct(knex, newProduct) {
         return knex
