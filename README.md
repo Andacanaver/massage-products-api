@@ -1,3 +1,8 @@
+You can log into a demo account with the username: demo and password: TestPassword1!
+
+
+
+
 # Express Boilerplate!
 
 This is a boilerplate project used for starting new projects!

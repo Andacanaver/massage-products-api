@@ -1,4 +1,3 @@
-const xss = require('xss')
 
 const ProductsService = {
     getAllProducts(knex) {
@@ -29,14 +28,20 @@ const ProductsService = {
     getType(knex, type) {
         return knex
 			.select("*")
-			.from("massage_products AS mp")
-			.where("mp.product_type",type);
+			.from("massage_products")
+			.where("product_type",type);
     },
     updateProduct(knex, id, newProductFields) {
         return knex('massage_products')
             .where({ id })
             .update(newProductFields)
     },
+    checkProduct(knex, product_name) {
+        return knex
+            .from('massage_products')
+            .where({ product_name })
+            .then(product => !!product)
+    }
 }
 
 module.exports = ProductsService;

@@ -25,6 +25,7 @@ productsRouter
                 res.json(products.map(serializeProduct))
             })
             .catch(next)
+        
     })
     .post(jsonParser, (req, res, next) => {
         const { product_name, product_type, product_description, price, product_image } = req.body;
@@ -48,30 +49,33 @@ productsRouter
 	.route("/search")
 	.get(
 		(req, res, next) => {
-			const knexInstance = req.app.get("db");
-			ProductsService.getAllSearchProducts(knexInstance, req.query.name)
+            const knexInstance = req.app.get("db");
+            if (req.query.name) {
+				ProductsService.getAllSearchProducts(
+					knexInstance,
+					req.query.name
+				)
+					.then(products => {
+						if(!products) {
+                            return res.status(400).json({
+                                error: `No products containing '${req.query.name}'.`
+                            })
+                        }
+                        return res.json(products.map(serializeProduct));
+					})
+					.catch(next);
+			}
+            
+            if(req.query.type) {
+            ProductsService.getType(knexInstance, req.query.type)
 				.then(products => {
 					res.json(products.map(serializeProduct));
 				})
-				.catch(next);
-		},
-		(req, res, next) => {
-			const knexInstance = req.app.get("db");
-			ProductsService.getType(knexInstance, req.query.type)
-				.then(products => {
-					res.json(products.map(serializeProduct));
-				})
-				.catch(next);
-		}
+                .catch(next);
+            }
+        }
 	)
-	.get((req, res, next) => {
-		const knexInstance = req.app.get("db");
-		ProductsService.getType(knexInstance, req.query.type)
-			.then(products => {
-				res.json(products.map(serializeProduct));
-			})
-			.catch(next);
-	});
+	
 productsRouter
     .route('/type')
     .get((req, res, next) => {

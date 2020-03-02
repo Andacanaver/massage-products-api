@@ -1,8 +1,8 @@
 module.exports = {
 	PORT: process.env.PORT || 8000,
 	NODE_ENV: process.env.NODE_ENV || "development",
-	DB_URL:
-		process.env.DB_URL ||
+	DATABASE_URL:
+		process.env.DATABASE_URL ||
 		"postgresql://jmoe:jmoeadmin@localhost/massage-products",
 	JWT_SECRET: process.env.JWT_SECRET || 'super-secret-passphrase',
 	JWT_EXPIRY: process.env.JWT_EXPIRY || '1d'
