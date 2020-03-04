@@ -81,50 +81,53 @@ productsRouter
     })
 
 productsRouter
-    .route('/:product_id')
-    .all(checkProductExists)
-    .get((req, res) => {
-        res.json(serializeProduct(res.product))
-    })
-    .patch(jsonParser, (req, res, next) => {
-        const { product_name, product_type, product_description, price, product_image } = req.body
-        const productToUpdate = { product_name, product_type, product_description, price, product_image }
-
-        const numberOfValues = Object.values(productToUpdate).filter(Boolean).length
-        if(numberOfValues === 0) {
-            return res.status(400).json({
-                error: `Request body must contain any of the following, name, type, description, price or image.`
-            })
-        }
-        ProductsService.updateProduct(
-            req.app.get('db'),
-            req.params.product_id,
-            productToUpdate
-        )
-        .then(numRowsAffected => {
-            res.status(204).end()
+	.route("/:product_id")
+	.all((req, res, next) => {
+		ProductsService.getById(req.app.get("db"), req.params.product_id)
+			.then(product => {
+				if (!product) {
+					return res.json({ error: `Product doesn't exist` });
+				}
+				res.product = product;
+				next();
+			})
+			.catch(next)
         })
-        .catch(next)
+    .get((req, res, next) => {
+        res.json(serializeProduct(res.product));
     })
+	.patch(jsonParser, (req, res, next) => {
+		const {
+			product_name,
+			product_type,
+			product_description,
+			price,
+			product_image
+		} = req.body;
+		const productToUpdate = {
+			product_name,
+			product_type,
+			product_description,
+			price,
+			product_image
+		};
 
+		const numberOfValues = Object.values(productToUpdate).filter(Boolean)
+			.length;
+		if (numberOfValues === 0) {
+			return res.status(400).json({
+				error: `Request body must contain any of the following, name, type, description, price or image.`
+			});
+		}
+		ProductsService.updateProduct(
+			req.app.get("db"),
+			req.params.product_id,
+			productToUpdate
+		)
+			.then(numRowsAffected => {
+				res.status(204).end();
+			})
+			.catch(next);
+	});
 
-
-async function checkProductExists(req, res, next) {
-    try {
-        const product = await ProductsService.getById(
-            req.app.get('db'),
-            req.params.product_id
-        )
-
-        if (!product) {
-            return res.status(404).json({
-                error: `Product doesn't exist`
-            })
-        }
-        res.product = product
-        next()
-    } catch (error) {
-        next(error)
-    }
-}
 module.exports = productsRouter

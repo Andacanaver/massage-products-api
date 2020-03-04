@@ -213,7 +213,8 @@ function cleanTables(db) {
 			.raw(
 				`TRUNCATE
                 massage_products,
-                massage_users`
+                massage_users,
+                massage_wishlist CASCADE`
 			)
 			.then(() =>
 				Promise.all([
@@ -223,8 +224,12 @@ function cleanTables(db) {
 					trx.raw(
 						`ALTER SEQUENCE massage_products_id_seq minvalue 0 START WITH 1`
 					),
+					trx.raw(
+						`ALTER SEQUENCE massage_wishlist_id_seq minvalue 0 START WITH 1`
+					),
 					trx.raw(`SELECT setval('massage_users_id_seq', 0)`),
 					trx.raw(`SELECT setval('massage_products_id_seq', 0)`),
+					trx.raw(`SELECT setval('massage_wishlist_id_seq', 0)`)
 				])
 			)
 	);
@@ -236,17 +241,20 @@ function seedProductsTable(db, products) {
         await trx.raw(`SELECT setval('massage_products_id_seq', ?)`, [products[products.length - 1].id])
     })
 }
-function seedWishlist(db, wishlist) {
+function seedWishlists(db, wishlist, users) {
     return db.transaction(async trx => {
+        await seedUsers(trx, users)
         await trx.into('massage_wishlist').insert(wishlist)
+        await trx.raw(`SELECT setval('massage_wishlist_id_seq', ?)`, [wishlist[wishlist.length - 1].id])
     })
 }
 function seedWishlistProducts(db, wishlist) {
     return db.transaction(async trx => {
-        await trx.into('massage_wishlist_products'),insert(wishlist)
+        await trx.into('massage_wishlist_products').insert(wishlist)
     })
 }
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
+    console.log(user.username)
     const token = jwt.sign({ user_id: user.id}, secret, {
         subject: user.username,
         algorithm: 'HS256'
@@ -270,10 +278,10 @@ function seedUsers(db, users) {
 function makeFixtures() {
     const testUsers = makeUserArray()
     const testProducts = makeProductsArray()
-    const testWishlist = makeWishlistArray(testUsers)
-    const testWishlistProducts = fillWishlistsArray(testProducts, testWishlist)
+    const testWishlists = makeWishlistArray(testUsers)
+    const testWishlistProducts = fillWishlistsArray(testProducts, testWishlists)
 
-    return { testProducts, testUsers, testWishlist, testWishlistProducts}
+    return { testProducts, testUsers, testWishlists, testWishlistProducts}
 }
 
 
@@ -290,9 +298,18 @@ function makeExpectedProduct(product) {
     }
 }
 
+function makeExpectedWishlist(wishlist) {
+    return {
+        id: wishlist.id,
+        wishlist_name: wishlist.wishlist_name,
+        user_id: wishlist.user_id
+    }
+}
+
 
 
 module.exports = {
+    makeExpectedWishlist,
     makeExpectedProduct,
     makeFixtures,
     makeUserArray,
@@ -303,6 +320,6 @@ module.exports = {
     seedUsers,
     cleanTables,
     fillWishlistsArray,
-    seedWishlist,
+    seedWishlists,
     seedWishlistProducts
 }

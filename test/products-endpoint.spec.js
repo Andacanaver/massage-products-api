@@ -2,7 +2,7 @@ const knex = require("knex");
 const app = require("../src/app")
 const helpers = require("./test-helpers")
 
-describe.only('Products Endpoint', function() {
+describe('Products Endpoint', function() {
     let db;
 
     const { testProducts } = helpers.makeFixtures();
@@ -14,9 +14,7 @@ describe.only('Products Endpoint', function() {
             connection: process.env.TEST_DATABASE_URL
         });
         app.set('db', db);
-        db.on("query", function(queryData) {
-			console.log(queryData);
-		});
+        
     })
 
     after('disconnect from db', () => db.destroy())
@@ -39,7 +37,6 @@ describe.only('Products Endpoint', function() {
 					.get("/api/products")
 					.expect(200)
 					.then(() => expect(expectedProducts))
-					.then(() => console.log("second round", expectedProducts));
             })
         })
     })
@@ -48,17 +45,16 @@ describe.only('Products Endpoint', function() {
 		context("Given there are products in the db", () => {
 			beforeEach("insert products", () => {
 				helpers.seedProductsTable(db, testProducts);
-			});
+            });
 			it("responds with 200 and the specified product", () => {
 				const productId = 2;
 				const expectedProduct = helpers.makeExpectedProduct(
 					testProducts[productId - 1]
-				);
+                );
 				return supertest(app)
 					.get(`/api/products/${productId}`)
 					.expect(200)
 					.then(() => expect(expectedProduct))
-					.then(() => console.log("second round", expectedProduct));
 			});
 		});
 	});
