@@ -276,13 +276,7 @@ function makeFixtures() {
     return { testProducts, testUsers, testWishlist, testWishlistProducts}
 }
 
-function createJwt(subject, payload) {
-        return jwt.sign(payload, process.env.JWT_SECRET, {
-            subject,
-            expiresIn: process.env.JWT_EXPIRY,
-            algorithm: 'HS256'
-        })
-    }
+
 
 function makeExpectedProduct(product) {
     return {
@@ -300,7 +294,6 @@ function makeExpectedProduct(product) {
 
 module.exports = {
     makeExpectedProduct,
-    createJwt,
     makeFixtures,
     makeUserArray,
     makeWishlistArray,

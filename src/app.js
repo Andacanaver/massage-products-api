@@ -30,6 +30,8 @@ app.use('/api/profile', profileRouter)
 app.use('/api/types', typeRouter)
 app.use('/api/wishlist', wishlistRouter)
 
+
+
 app.use(function errorHandler(error, req, res, next) {
     let response
     if (NODE_ENV === 'production') {

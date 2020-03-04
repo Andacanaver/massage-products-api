@@ -24,9 +24,8 @@ describe("Users Endpoint", function() {
 
 	describe(`POST /api/users`, () => {
 		context(`User validation`, () => {
-			beforeEach("insert Users", () => helpers.seedUsers(db, testUsers));
 
-			context.only("Happy path", () => {
+			context("Happy path", () => {
 				it("responds with 201, serialized user, storing bcrypted password", () => {
 					const newUser = {
 						full_name: "New Test User",

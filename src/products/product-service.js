@@ -41,7 +41,8 @@ const ProductsService = {
             .from('massage_products')
             .where({ product_name })
             .then(product => !!product)
-    }
+    },
+    
 }
 
 module.exports = ProductsService;
