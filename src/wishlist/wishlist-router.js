@@ -62,18 +62,19 @@ wishlistRouter
 wishlistRouter
     .route('/:wishlist_id')
     .all(requireAuth)
+    .all((req, res, next) => {
+        WishlistService.getById(req.app.get('db'), req.params.wishlist_id)
+            .then(wishlist => {
+                if(!wishlist) {
+                    return res.status(400).json({ error: `Wishlist doesn't exist` })
+                }
+                res.wishlist = wishlist
+                next()
+            })
+            .catch(next)
+    })
     .get((req, res, next) => {
-        if(req.user.id) {
-            WishlistService.getWishlistProducts(
-				req.app.get("db"),
-				req.params.wishlist_id,
-				req.user.id
-			)
-				.then(product => {
-					res.json(product.map(serializeProduct));
-				})
-				.catch(next);
-        }
+        res.json(product.map(serializeProduct));
     })
     .post(jsonParser, (req, res, next) => {
         const { product_id, wishlist_id } = req.body
