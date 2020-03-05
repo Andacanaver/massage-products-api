@@ -47,12 +47,15 @@ describe('Wishlist Endpoint', function() {
             })
             it(`responds with 200 and all the products in a wishlist`, () => {
                 const wishlistId = 1
-                const expectedWishlistProducts = helpers.makeExpectedWishlistProducts(testWishlistProducts, wishlistId, testProducts, testUser)
-                console.log(expectedWishlistProducts)
+                const expectedSomethings = helpers.makeExpectedWishlistProducts(testWishlistProducts, testWishlists[0].id).map(product => {
+                    helpers.makeSomethingWishlist(product, testWishlists[0], testProducts, testUser)
+                })
+                
+                console.log('should be all products in wishlist', expectedSomethings)
                 return supertest(app)
 					.get(`/api/wishlist/${wishlistId}`)
-                    .set("Authorization", helpers.makeAuthHeader(testUser))
-                    .expect(200, expectedWishlistProducts)
+                    .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
+                    .expect(200, expectedSomethings)
             })
         })
     })

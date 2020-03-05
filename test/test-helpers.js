@@ -259,26 +259,32 @@ function makeExpectedWishlists(user, wishlists) {
     const expectedWishlists = wishlists.filter(wishlist => wishlist.user_id === user.id)
     return expectedWishlists
 }
-function makeExpectedWishlistProducts(wishlistProducts, wishlistId, products,user) {
+function makeExpectedWishlistProducts(wishlistProducts, wishlistId) {
     const expectedProducts = wishlistProducts.filter(wishlist => wishlist.wishlist_id === wishlistId)
-    console.log(expectedProducts)
+    
+    return expectedProducts
+}
+function makeSomethingWishlist(wishlistProduct, wishlist, product, user){
     return {
-        wishlist_name: wishlistId.wishlist_name,
-        wishlist_id: expectedProducts.wishlist_id,
-        product_id: expectedProducts.product_id,
-        user_id: user.id,
-        product_name: products.product_name,
-        price: products.price,
-        product_description: products.product_description,
-        product_image: products.product_image,
-        product_type: products.product_type
-    }
+		wishlist_name: wishlist.wishlist_name,
+		wishlist_id: wishlistProduct.wishlist_id,
+		product_id: wishlistProduct.product_id,
+		user_id: user.id,
+		product_name: product.product_name,
+		price: product.price,
+		product_description: product.product_description,
+		product_image: product.product_image,
+		product_type: product.product_type
+	};
 }
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
+    console.log(user.username)
+    console.log(user.id)
     const token = jwt.sign({ user_id: user.id, username: user.username}, secret, {
         subject: user.username,
         algorithm: 'HS256'
     })
+    console.log(token)
     return `Bearer ${token}`
     
 }
@@ -337,6 +343,7 @@ function makeExpectedWishlist(wishlist) {
 
 
 module.exports = {
+    makeSomethingWishlist,
     makeWishlistExpectedProduct,
     makeExpectedWishlistProducts,
     makeExpectedWishlists,

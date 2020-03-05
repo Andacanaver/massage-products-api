@@ -22,7 +22,6 @@ const WishlistService = {
 				'mp.product_description',
 				'mp.product_image',
 				'mp.product_type'
-
 			)
 			.distinct("mp.product_name")
 			.leftJoin(
