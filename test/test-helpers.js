@@ -214,7 +214,8 @@ function cleanTables(db) {
 				`TRUNCATE
                 massage_products,
                 massage_users,
-                massage_wishlist CASCADE`
+                massage_wishlist,
+                massage_wishlist_products CASCADE`
 			)
 			.then(() =>
 				Promise.all([
@@ -248,18 +249,38 @@ function seedWishlists(db, wishlist, users) {
         await trx.raw(`SELECT setval('massage_wishlist_id_seq', ?)`, [wishlist[wishlist.length - 1].id])
     })
 }
-function seedWishlistProducts(db, wishlist) {
+function seedWishlistProducts(db, wishlistProducts) {
     return db.transaction(async trx => {
-        await trx.into('massage_wishlist_products').insert(wishlist)
+        await trx.into('massage_wishlist_products').insert(wishlistProducts)
     })
 }
+
+function makeExpectedWishlists(user, wishlists) {
+    const expectedWishlists = wishlists.filter(wishlist => wishlist.user_id === user.id)
+    return expectedWishlists
+}
+function makeExpectedWishlistProducts(wishlistProducts, wishlistId, products,user) {
+    const expectedProducts = wishlistProducts.filter(wishlist => wishlist.wishlist_id === wishlistId)
+    console.log(expectedProducts)
+    return {
+        wishlist_name: wishlistId.wishlist_name,
+        wishlist_id: expectedProducts.wishlist_id,
+        product_id: expectedProducts.product_id,
+        user_id: user.id,
+        product_name: products.product_name,
+        price: products.price,
+        product_description: products.product_description,
+        product_image: products.product_image,
+        product_type: products.product_type
+    }
+}
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
-    console.log(user.username)
-    const token = jwt.sign({ user_id: user.id}, secret, {
+    const token = jwt.sign({ user_id: user.id, username: user.username}, secret, {
         subject: user.username,
         algorithm: 'HS256'
     })
-    return `Bearer ${token}`;
+    return `Bearer ${token}`
+    
 }
 
 function seedUsers(db, users) {
@@ -297,6 +318,13 @@ function makeExpectedProduct(product) {
         date_created: product.date_created.toISOString()
     }
 }
+function makeWishlistExpectedProduct(product) {
+    return {
+        wishlist_id: product.wishlist_id,
+        product_id: product.product_id,
+        
+    }
+}
 
 function makeExpectedWishlist(wishlist) {
     return {
@@ -309,6 +337,9 @@ function makeExpectedWishlist(wishlist) {
 
 
 module.exports = {
+    makeWishlistExpectedProduct,
+    makeExpectedWishlistProducts,
+    makeExpectedWishlists,
     makeExpectedWishlist,
     makeExpectedProduct,
     makeFixtures,
