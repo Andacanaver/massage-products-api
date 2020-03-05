@@ -17,7 +17,6 @@ const serializeProduct = product => ({
     wishlist_id: product.wishlist_id,
     user_id: product.user_id,
     product_id: product.product_id,
-    product_name: product.product_name,
     price: product.price,
     product_description: product.product_description,
     product_image: product.product_image,
@@ -33,7 +32,6 @@ wishlistRouter
             .then(wishlist => {
                 res.json(wishlist.map(serializeWishlist));
             })
-            
             .catch(next)
     })
     .post(jsonParser, (req, res, next) => {
@@ -62,19 +60,18 @@ wishlistRouter
 wishlistRouter
     .route('/:wishlist_id')
     .all(requireAuth)
-    .all((req, res, next) => {
-        WishlistService.getById(req.app.get('db'), req.params.wishlist_id)
-            .then(wishlist => {
-                if(!wishlist) {
-                    return res.status(400).json({ error: `Wishlist doesn't exist` })
-                }
-                res.wishlist = wishlist
-                next()
-            })
-            .catch(next)
-    })
     .get((req, res, next) => {
-        res.json(product.map(serializeProduct));
+        if(req.user.id) {
+            WishlistService.getWishlistProducts(
+				req.app.get("db"),
+				req.params.wishlist_id,
+				req.user.id
+			)
+				.then(product => {
+					res.json(product.map(serializeProduct));
+				})
+				.catch(next);
+        }
     })
     .post(jsonParser, (req, res, next) => {
         const { product_id, wishlist_id } = req.body

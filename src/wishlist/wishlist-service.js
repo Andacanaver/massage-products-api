@@ -10,7 +10,7 @@ const WishlistService = {
 	getById(knex, id, userId) {
 		return WishlistService.getWishlistProducts(knex)
 			.where({'wl.id': id, 'wl.user_id': userId})
-			.first()
+			
 	},
     getWishlistProducts(knex, id, userId) {
         return knex

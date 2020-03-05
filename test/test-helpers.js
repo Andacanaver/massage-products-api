@@ -151,7 +151,7 @@ function makeProductsArray() {
 			product_image: "https://i.imgur.com/OAvQvBu.jpg",
 			date_created: new Date("2029-01-22T16:28:32.615Z")
 		}
-	];
+	]
 }
 
 function fillWishlistsArray(productId, wishlistId) {
@@ -242,11 +242,12 @@ function seedProductsTable(db, products) {
         await trx.raw(`SELECT setval('massage_products_id_seq', ?)`, [products[products.length - 1].id])
     })
 }
-function seedWishlists(db, wishlist, users) {
+function seedWishlists(db, wishlist, users, wishlistProducts) {
     return db.transaction(async trx => {
         await seedUsers(trx, users)
         await trx.into('massage_wishlist').insert(wishlist)
         await trx.raw(`SELECT setval('massage_wishlist_id_seq', ?)`, [wishlist[wishlist.length - 1].id])
+        await trx.into('massage_wishlist_products').insert(wishlistProducts)
     })
 }
 function seedWishlistProducts(db, wishlistProducts) {
@@ -259,14 +260,23 @@ function makeExpectedWishlists(user, wishlists) {
     const expectedWishlists = wishlists.filter(wishlist => wishlist.user_id === user.id)
     return expectedWishlists
 }
-function makeExpectedWishlistProducts(wishlistProducts, wishlistId) {
-    const expectedProducts = wishlistProducts.filter(wishlist => wishlist.wishlist_id === wishlistId)
+function makeExpectedWishlistProducts(wishlistProducts, wishlist, user, products) {
+    const expectedProducts = wishlistProducts.filter(product => product.wishlist_id === wishlist.id)
     
-    return expectedProducts
-}
-function makeSomethingWishlist(wishlistProduct, wishlist, product, user){
     return {
-		wishlist_name: wishlist.wishlist_name,
+		wishlist_id: expectedProducts.wishlist_id,
+		product_id: expectedProducts.product_id,
+		user_id: user.id,
+		product_name: products.product_name,
+		price: products.price,
+		product_description: products.product_description,
+		product_image: products.product_image,
+		product_type: products.product_type
+	};
+}
+function makeSomethingWishlist(wishlistProduct, wishlist, user){
+    const expectedSomething = makeExpectedWishlistProducts(wishlistProduct, wishlist)
+    return expectedSomething.map(product => ({
 		wishlist_id: wishlistProduct.wishlist_id,
 		product_id: wishlistProduct.product_id,
 		user_id: user.id,
@@ -275,11 +285,10 @@ function makeSomethingWishlist(wishlistProduct, wishlist, product, user){
 		product_description: product.product_description,
 		product_image: product.product_image,
 		product_type: product.product_type
-	};
+	}))
 }
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
-    console.log(user.username)
-    console.log(user.id)
+    console.log(user)
     const token = jwt.sign({ user_id: user.id, username: user.username}, secret, {
         subject: user.username,
         algorithm: 'HS256'
