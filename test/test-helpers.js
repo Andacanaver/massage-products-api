@@ -265,27 +265,30 @@ function makeExpectedWishlistProducts(wishlistProducts, wishlist) {
     return expectedProducts
 }
 function makeSomethingWishlist(wishlist, products, wishlistproduct){
-    console.log('hellowishlist products', wishlistproduct)
     //gets products in wishlist
     const wishlistProducts = wishlistproduct.filter(
 		wishlistProduct => (wishlistProduct.wishlist_id === wishlist.id)
     );
+    //should get the product from the products array to get the name, price, etc information  
+    const somethingProduct = wishlistProducts.map(product => products.filter(testProduct => testProduct.id === product.product_id))
     const expectedProducts = products.filter(
-        testProduct => (testProduct.id === wishlistProducts.product_id)
+        testProduct => wishlistProducts.product_id === testProduct.id
     )
     
     console.log('hello wishlistProducts', wishlistProducts)
-    console.log('hello expected products', expectedProducts)
-    return expectedProducts.map(expectedWishlistProduct => ({
-		wishlist_id: wishlistProducts.wishlist_id,
-		product_id: wishlistProducts.product_id,
+    console.log("hello expected products", somethingProduct);
+    return somethingProduct.map(expectedWishlistProduct => {
+        return {
+		wishlist_id: wishlist.id,
+		product_id: expectedWishlistProduct.id,
 		user_id: wishlist.user_id,
 		product_name: expectedWishlistProduct.product_name,
 		price: expectedWishlistProduct.price,
 		product_description: expectedWishlistProduct.product_description,
 		product_image: expectedWishlistProduct.product_image,
 		product_type: expectedWishlistProduct.product_type
-	}));
+        }
+    });
 }
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
     console.log(user)
