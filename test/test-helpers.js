@@ -271,24 +271,13 @@ function makeSomethingWishlist(wishlist, products, wishlistproduct){
     );
     //should get the product from the products array to get the name, price, etc information  
     const somethingProduct = wishlistProducts.map(product => products.filter(testProduct => testProduct.id === product.product_id))
-    const expectedProducts = products.filter(
-        testProduct => wishlistProducts.product_id === testProduct.id
-    )
+    
     
     console.log('hello wishlistProducts', wishlistProducts)
     console.log("hello expected products", somethingProduct);
-    return somethingProduct.map(expectedWishlistProduct => {
-        return {
-		wishlist_id: wishlist.id,
-		product_id: expectedWishlistProduct.id,
-		user_id: wishlist.user_id,
-		product_name: expectedWishlistProduct.product_name,
-		price: expectedWishlistProduct.price,
-		product_description: expectedWishlistProduct.product_description,
-		product_image: expectedWishlistProduct.product_image,
-		product_type: expectedWishlistProduct.product_type
-        }
-    });
+    
+    return somethingProduct
+    ;
 }
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
     console.log(user)

@@ -47,7 +47,7 @@ describe('Wishlist Endpoint', function() {
                 const wishlistId = 1
                 const expectedWishlistProducts =  
                     (helpers.makeSomethingWishlist(testWishlists[0], testProducts, testWishlistProducts))
-                
+                console.log('hello wishlist products expected', expectedWishlistProducts)
                 return supertest(app)
 					.get(`/api/wishlist/${wishlistId}`)
                     .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
