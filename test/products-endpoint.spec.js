@@ -50,7 +50,7 @@ describe('Products Endpoint', function() {
 				const productId = 2;
 				const expectedProduct = helpers.makeExpectedProduct(
 					testProducts[productId - 1]
-                );
+                )
 				return supertest(app)
 					.get(`/api/products/${productId}`)
 					.expect(200)

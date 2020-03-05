@@ -40,29 +40,18 @@ describe('Wishlist Endpoint', function() {
         context('Given there are products in the wishlist', () => {
             beforeEach('insert wishlists', () => 
                 (helpers.seedProductsTable(db, testProducts),
-                helpers.seedWishlists(db, testWishlists, testUsers, testWishlistProducts),
-                helpers.seedWishlistProducts(db, testWishlistProducts))
+                helpers.seedWishlists(db, testWishlists, testUsers, testWishlistProducts)
+                )
             )
             it(`responds with 200 and all the products in a wishlist`, () => {
                 const wishlistId = 1
-                const expectedWishlistProducts = helpers.makeExpectedWishlistProducts(testWishlistProducts, testWishlists[0], testUser, testProducts)
-                db.from("massage_products")
-					.select("*")
-                    .then(rows => console.log(rows));
-                db.from("massage_users")
-					.select("*")
-                    .then(rows => console.log(rows));
-                db.from("massage_wishlist")
-					.select("*")
-                    .then(rows => console.log(rows));
-                db.from("massage_wishlist_products")
-					.select("*")
-					.then(rows => console.log(rows));
+                const expectedWishlistProducts =  
+                    (helpers.makeSomethingWishlist(testWishlists[0], testProducts, testWishlistProducts))
+                
                 return supertest(app)
 					.get(`/api/wishlist/${wishlistId}`)
                     .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
                     .expect(200, expectedWishlistProducts)
-                    .then(res => console.log(res))
             })
         })
     })
