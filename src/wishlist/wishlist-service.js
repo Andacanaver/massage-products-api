@@ -7,6 +7,11 @@ const WishlistService = {
 				'massage_wishlist.user_id', 'massage_wishlist.wishlist_name', 'massage_wishlist.id')
             
 	},
+	getById(knex, id, userId) {
+		return WishlistService.getWishlistProducts(knex)
+			.where({'wl.id': id, 'wl.user_id': userId})
+			
+	},
     getWishlistProducts(knex, id, userId) {
         return knex
 			.from("massage_wishlist AS wl")

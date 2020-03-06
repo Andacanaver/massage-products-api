@@ -12,9 +12,7 @@ describe('Wishlist Endpoint', function() {
             client: 'pg', 
             connection: process.env.TEST_DATABASE_URL
         });
-        db.on("query", function(queryData) {
-			console.log(queryData);
-		});
+        
         app.set('db', db);
     })
     after("disconnect from db", () => db.destroy());
@@ -25,9 +23,10 @@ describe('Wishlist Endpoint', function() {
 
     describe('GET /api/wishlist', () => {
         context('given there are wishlists in the database',() => {
-            beforeEach('insert wishlists', () => {
-                helpers.seedWishlists(db, testWishlists, testUsers)
-            })
+            beforeEach('insert wishlists', () => (
+                helpers.seedProductsTable(db, testProducts),
+                helpers.seedWishlists(db, testWishlists, testUsers, testWishlistProducts)
+            ))
             it('responds with 200 and all wishlists', () => {
                 const expectedWishlists = helpers.makeExpectedWishlists(testUser, testWishlists)
                 return supertest(app)
@@ -38,24 +37,21 @@ describe('Wishlist Endpoint', function() {
         })
     })
 
-    describe.only('GET /api/wishlist/:wishlist_id', () => {
+    describe('GET /api/wishlist/:wishlist_id', () => {
         context('Given there are products in the wishlist', () => {
-            beforeEach('insert wishlists', () => {
-                helpers.seedProductsTable(db, testProducts),
-                helpers.seedWishlists(db, testWishlists, testUsers)
-                
-            })
+            beforeEach('insert wishlists', () => 
+                (helpers.seedProductsTable(db, testProducts),
+                helpers.seedWishlists(db, testWishlists, testUsers, testWishlistProducts)
+                )
+            )
             it(`responds with 200 and all the products in a wishlist`, () => {
                 const wishlistId = 1
-                const expectedSomethings = helpers.makeExpectedWishlistProducts(testWishlistProducts, testWishlists[0].id).map(product => {
-                    helpers.makeSomethingWishlist(product, testWishlists[0], testProducts, testUser)
-                })
-                
-                console.log('should be all products in wishlist', expectedSomethings)
+                const expectedWishlistProducts =  
+                    (helpers.makeSomethingWishlist(testWishlists[0], testProducts, testWishlistProducts))
                 return supertest(app)
 					.get(`/api/wishlist/${wishlistId}`)
                     .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
-                    .expect(200, expectedSomethings)
+                    .expect(200, expectedWishlistProducts)
             })
         })
     })

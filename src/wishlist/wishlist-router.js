@@ -17,7 +17,6 @@ const serializeProduct = product => ({
     wishlist_id: product.wishlist_id,
     user_id: product.user_id,
     product_id: product.product_id,
-    product_name: product.product_name,
     price: product.price,
     product_description: product.product_description,
     product_image: product.product_image,
@@ -33,7 +32,6 @@ wishlistRouter
             .then(wishlist => {
                 res.json(wishlist.map(serializeWishlist));
             })
-            
             .catch(next)
     })
     .post(jsonParser, (req, res, next) => {

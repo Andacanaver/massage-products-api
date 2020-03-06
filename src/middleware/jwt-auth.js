@@ -5,6 +5,7 @@ function requireAuth(req, res, next) {
 
     let bearerToken
     if (!authToken.toLowerCase().startsWith('bearer ')) {
+        console.log('hello bearer error')
         return res.status(401).json({ error: `Missing bearer token `})
     } else {
         bearerToken = authToken.slice(7, authToken.length)
@@ -18,6 +19,8 @@ function requireAuth(req, res, next) {
         )
             .then(user => {
                 if (!user) {
+                    console.log(user)
+                    console.log('hello user error')
                     return res.status(401).json({ error: 'Unauthorized request' })
                 }
                 req.user = user
@@ -28,6 +31,7 @@ function requireAuth(req, res, next) {
                 next(err)
             })
     } catch(error) {
+        console.log('hello catch error unauthorized request')
         res.status(401).json({ error: 'Unauthorized request' })
     }
 }

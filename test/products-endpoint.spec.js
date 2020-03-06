@@ -25,9 +25,9 @@ describe('Products Endpoint', function() {
 
     describe('GET /api/products', () => {
         context('given there are products in the database', () => {
-            beforeEach("insert products", () => {
-				helpers.seedProductsTable(db, testProducts);
-			});
+            beforeEach("insert products", () => 
+				helpers.seedProductsTable(db, testProducts)
+			);
             
             it('responds with 200 and all products', () => {
                 const expectedProducts = testProducts.map(product => 
@@ -43,14 +43,14 @@ describe('Products Endpoint', function() {
     
     describe("GET /api/products/:product_id", () => {
 		context("Given there are products in the db", () => {
-			beforeEach("insert products", () => {
-				helpers.seedProductsTable(db, testProducts);
-            });
+			beforeEach("insert products", () => 
+				helpers.seedProductsTable(db, testProducts)
+            );
 			it("responds with 200 and the specified product", () => {
 				const productId = 2;
 				const expectedProduct = helpers.makeExpectedProduct(
 					testProducts[productId - 1]
-                );
+                )
 				return supertest(app)
 					.get(`/api/products/${productId}`)
 					.expect(200)

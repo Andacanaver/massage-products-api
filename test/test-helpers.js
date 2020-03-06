@@ -151,7 +151,7 @@ function makeProductsArray() {
 			product_image: "https://i.imgur.com/OAvQvBu.jpg",
 			date_created: new Date("2029-01-22T16:28:32.615Z")
 		}
-	];
+	]
 }
 
 function fillWishlistsArray(productId, wishlistId) {
@@ -242,11 +242,12 @@ function seedProductsTable(db, products) {
         await trx.raw(`SELECT setval('massage_products_id_seq', ?)`, [products[products.length - 1].id])
     })
 }
-function seedWishlists(db, wishlist, users) {
+function seedWishlists(db, wishlist, users, wishlistProducts) {
     return db.transaction(async trx => {
         await seedUsers(trx, users)
         await trx.into('massage_wishlist').insert(wishlist)
         await trx.raw(`SELECT setval('massage_wishlist_id_seq', ?)`, [wishlist[wishlist.length - 1].id])
+        await trx.into('massage_wishlist_products').insert(wishlistProducts)
     })
 }
 function seedWishlistProducts(db, wishlistProducts) {
@@ -259,36 +260,56 @@ function makeExpectedWishlists(user, wishlists) {
     const expectedWishlists = wishlists.filter(wishlist => wishlist.user_id === user.id)
     return expectedWishlists
 }
-function makeExpectedWishlistProducts(wishlistProducts, wishlistId) {
-    const expectedProducts = wishlistProducts.filter(wishlist => wishlist.wishlist_id === wishlistId)
-    
+function makeExpectedWishlistProducts(wishlistProducts, wishlist) {
+    const expectedProducts = wishlistProducts.filter(product => product.wishlist_id === wishlist.id)
     return expectedProducts
 }
-function makeSomethingWishlist(wishlistProduct, wishlist, product, user){
+function makeExpectedProfile(user) {
     return {
-		wishlist_name: wishlist.wishlist_name,
-		wishlist_id: wishlistProduct.wishlist_id,
-		product_id: wishlistProduct.product_id,
-		user_id: user.id,
-		product_name: product.product_name,
-		price: product.price,
-		product_description: product.product_description,
-		product_image: product.product_image,
-		product_type: product.product_type
-	};
+        full_name: user.full_name,
+        username: user.username,
+        email_address: user.email_address,
+        id: user.id
+    }
 }
+function makeSomethingWishlist(wishlist, products, wishlistproduct){
+    //gets products in wishlist
+    const wishlistProducts = wishlistproduct.filter(
+		wishlistProduct => (wishlistProduct.wishlist_id === wishlist.id)
+    );
+    //get the product Ids from the products in the wishlist
+    let wishlistProductIds = wishlistProducts.map(product => {
+		return product.product_id;
+	});
+    //filter the products from the wishlist to get the product information
+	const somethingProduct = products.filter(testProduct => {
+		return wishlistProductIds.indexOf(testProduct.id) != -1;
+	});
+    //map each product to show the correct info
+    return somethingProduct.map(product => {
+        return {
+			price: product.price,
+			product_description: product.product_description,
+			product_id: product.id,
+			product_image: product.product_image,
+			product_name: product.product_name,
+			product_type: product.product_type,
+			user_id: wishlist.user_id,
+			wishlist_id: wishlist.id
+		};    
+    })
+    ;
+}
+//make the token to show a user is logged in
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
-    console.log(user.username)
-    console.log(user.id)
     const token = jwt.sign({ user_id: user.id, username: user.username}, secret, {
         subject: user.username,
         algorithm: 'HS256'
     })
-    console.log(token)
     return `Bearer ${token}`
     
 }
-
+//seed the user table with the dummy info
 function seedUsers(db, users) {
     const preppedUsers = users.map(user => ({
         ...user,
@@ -301,7 +322,7 @@ function seedUsers(db, users) {
             )
         })
 }
-
+//make the arrays for the information
 function makeFixtures() {
     const testUsers = makeUserArray()
     const testProducts = makeProductsArray()
@@ -310,9 +331,7 @@ function makeFixtures() {
 
     return { testProducts, testUsers, testWishlists, testWishlistProducts}
 }
-
-
-
+//put together the info for a product when a product is clicked
 function makeExpectedProduct(product) {
     return {
         id: product.id,
@@ -324,6 +343,7 @@ function makeExpectedProduct(product) {
         date_created: product.date_created.toISOString()
     }
 }
+//
 function makeWishlistExpectedProduct(product) {
     return {
         wishlist_id: product.wishlist_id,
@@ -331,7 +351,7 @@ function makeWishlistExpectedProduct(product) {
         
     }
 }
-
+//show wishlist info
 function makeExpectedWishlist(wishlist) {
     return {
         id: wishlist.id,
@@ -343,6 +363,7 @@ function makeExpectedWishlist(wishlist) {
 
 
 module.exports = {
+    makeExpectedProfile,
     makeSomethingWishlist,
     makeWishlistExpectedProduct,
     makeExpectedWishlistProducts,
