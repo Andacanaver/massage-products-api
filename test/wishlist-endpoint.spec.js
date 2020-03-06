@@ -24,6 +24,7 @@ describe('Wishlist Endpoint', function() {
     describe('GET /api/wishlist', () => {
         context('given there are wishlists in the database',() => {
             beforeEach('insert wishlists', () => (
+                helpers.seedProductsTable(db, testProducts),
                 helpers.seedWishlists(db, testWishlists, testUsers, testWishlistProducts)
             ))
             it('responds with 200 and all wishlists', () => {
@@ -36,7 +37,7 @@ describe('Wishlist Endpoint', function() {
         })
     })
 
-    describe.only('GET /api/wishlist/:wishlist_id', () => {
+    describe('GET /api/wishlist/:wishlist_id', () => {
         context('Given there are products in the wishlist', () => {
             beforeEach('insert wishlists', () => 
                 (helpers.seedProductsTable(db, testProducts),
@@ -47,7 +48,6 @@ describe('Wishlist Endpoint', function() {
                 const wishlistId = 1
                 const expectedWishlistProducts =  
                     (helpers.makeSomethingWishlist(testWishlists[0], testProducts, testWishlistProducts))
-                console.log('hello wishlist products expected', expectedWishlistProducts)
                 return supertest(app)
 					.get(`/api/wishlist/${wishlistId}`)
                     .set("Authorization", helpers.makeAuthHeader(testUsers[0]))
