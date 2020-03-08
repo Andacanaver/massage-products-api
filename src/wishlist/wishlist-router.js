@@ -15,7 +15,6 @@ const serializeWishlist = wishlist => ({
 const serializeProduct = product => ({
     product_name: product.product_name,
     wishlist_id: product.wishlist_id,
-    user_id: product.user_id,
     product_id: product.product_id,
     price: product.price,
     product_description: product.product_description,
