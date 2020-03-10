@@ -1,31 +1,28 @@
-You can log into a demo account with the username: demo and password: TestPassword1!
+<h1>Massage Therapy Products API</h1>
 
+<p>This project is the back end for a full stack application that I created in hopes of one day using for a e-commerce website. It holds the services and routing for finding the products in the database as well as users, which include usernames, passwords and emails.</p>
 
+<h2>Technologies Used</h2>
 
+<ul>
+  <li>HTML</li>
+  <li>Node.js</li>
+  <li>Express</li>
+  <li>Postgresql</li>
+</ul>
 
-# Express Boilerplate!
+<h2>Launch</h2>
 
-This is a boilerplate project used for starting new projects!
+<ol>
+  <li>clone the repo</li>
+  <li>'npm install' in the directory</li>
+  <li>create the database and run 'npm run migrate' in the database</li>
+  <li>'npm start' or 'npm run dev' to start the server</li>
+</ol>
 
-## Set up
+<h2>Functionality</h2>
+<p>This server is used mainly for POST and GET requests by the client. In the future I would like to get the PATCH and DELETE requests up and running.</p>
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+<h2>Project Status</h2>
+<p>This project is at a Minimal Viable Product (MVP).</p>
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
-
-## Scripts
-
-Start the application `npm start`
-
-Start nodemon for the application `npm run dev`
-
-Run the tests `npm test`
-
-## Deploying
-
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
