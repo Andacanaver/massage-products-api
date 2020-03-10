@@ -22,7 +22,7 @@ const WishlistService = {
 				"mp.product_type"
 			)
 			.distinct("mp.product_name")
-			.leftJoin(
+			.innerJoin(
 				"massage_wishlist_products AS wlp",
 				"wl.id",
 				"wlp.wishlist_id"

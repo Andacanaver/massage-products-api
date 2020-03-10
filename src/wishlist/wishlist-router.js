@@ -67,7 +67,13 @@ wishlistRouter
 				req.user.id
 			)
 				.then(product => {
-					res.json(product.map(serializeProduct));
+					if(typeof product !== 'undefined') {
+                        return res.json(product.map(serializeProduct));
+                    } else {
+                        return res.status(400).json({
+                            error: `No products in wishlist`
+                        })
+                    }
 				})
 				.catch(next);
         }
