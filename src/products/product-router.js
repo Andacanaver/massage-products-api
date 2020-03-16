@@ -95,7 +95,15 @@ productsRouter
         })
     .get((req, res, next) => {
         res.json(serializeProduct(res.product));
-    })
+	})
+	.delete ((req, res, next) => {
+		ProductsService
+			.deleteProduct(req.app.get("db"), req.params.product_id)
+			.then(numRowsAffected => {
+				res.status(204).end();
+			})
+			.catch(next);
+	})
 	.patch(jsonParser, (req, res, next) => {
 		const {
 			product_name,

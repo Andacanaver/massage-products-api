@@ -42,7 +42,11 @@ const ProductsService = {
             .where({ product_name })
             .then(product => !!product)
     },
-    
+    deleteProduct(knex, id) {
+        return knex('massage_products')
+            .where({ id })
+            .delete()
+    }
 }
 
 module.exports = ProductsService;
