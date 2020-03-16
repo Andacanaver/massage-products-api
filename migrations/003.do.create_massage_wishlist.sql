@@ -5,7 +5,7 @@ CREATE TABLE massage_wishlist (
 );
 
 CREATE TABLE massage_wishlist_products (
-    product_id INTEGER REFERENCES massage_products(id),
-    wishlist_id INTEGER REFERENCES massage_wishlist(id),
+    product_id INTEGER REFERENCES massage_products(id) ON DELETE CASCADE,
+    wishlist_id INTEGER REFERENCES massage_wishlist(id) ON DELETE CASCADE,
     PRIMARY KEY(product_id, wishlist_id)
 );
