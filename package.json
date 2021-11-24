@@ -31,6 +31,7 @@
     "minimist": "^1.2.5",
     "morgan": "^1.9.1",
     "pg": "^7.18.1",
+    "postgrator-cli": "^3.2.0",
     "uuid": "^3.4.0",
     "winston": "^3.2.1",
     "xss": "^1.0.6"
@@ -41,7 +42,6 @@
     "eslint-plugin-react": "^7.18.0",
     "mocha": "^7.0.0",
     "nodemon": "^2.0.2",
-    "postgrator-cli": "^3.2.0",
     "supertest": "^4.0.2"
   }
 }
