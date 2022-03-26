@@ -25,7 +25,7 @@
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.95.14",
-    "minimist": "^1.2.5",
+    "minimist": "^1.2.6",
     "morgan": "^1.10.0",
     "pg": "^8.7.1",
     "postgrator-cli": "^4.0.0",
